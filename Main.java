@@ -1,5 +1,5 @@
 import java.util.Scanner;
-import java.math.BigDecimal;
+import java.math.*;
 import java.time.LocalDate;
 
 class Main {
@@ -7,7 +7,7 @@ class Main {
     Scanner console = new Scanner(System.in);
     String nome, dataAdmissao, cargo;
     int mesReferencia;
-    BigDecimal salarioBruto, salarioHora;
+    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade;
     
     //nome completo
     System.out.println("Insira seu nome: ");
@@ -30,6 +30,7 @@ class Main {
     salarioBruto = console.nextBigDecimal();
     
     salarioHora = calcularSalarioHora(salarioBruto, console);
+    adicionalPericulosidade = calcularPericulosidade(salarioBruto);
     
     //criar relatorio
     System.out.println("\n\n\n\n\n*****Folha de Pagamento******");
@@ -39,7 +40,7 @@ class Main {
     System.out.println("*****Cargo do colaborador: " + cargo);
     System.out.println("*****Salário do colaborador: ");
     System.out.println("*****Proventos*****");
-    System.out.println("*****Periculosidade: ");
+    System.out.println("*****Periculosidade: " + adicionalPericulosidade);
     System.out.println("*****Insalubridade: ");
     System.out.println("*****Descontos*****: ");
     System.out.println("*****INSS: ");
@@ -49,7 +50,6 @@ class Main {
     System.out.println("*****Vale Refeição: ");
     System.out.println("*****Valor do Salario Bruto: " + salarioBruto);
     System.out.println("*****Valor do Salario Hora: " + salarioHora);
-    
   }
 
   private static BigDecimal calcularSalarioHora(BigDecimal salarioBruto, Scanner console) {
@@ -64,7 +64,13 @@ class Main {
     jornadaSemanal = horasTrabalhadas * diasTrabalhados;
     jornadaMensal = jornadaSemanal * semanas;
     
-    return salarioBruto.divide(new BigDecimal(jornadaMensal));
+    return salarioBruto.divide(new BigDecimal(jornadaMensal)).setScale(2, RoundingMode.HALF_EVEN);
+  }
+
+  private static BigDecimal calcularPericulosidade(BigDecimal salarioBruto) {
+    double adicionalPericulosidade = 0.3;
+    
+    return salarioBruto.multiply(new BigDecimal(adicionalPericulosidade)).setScale(2, RoundingMode.HALF_EVEN);
   }
 
   
