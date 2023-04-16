@@ -6,8 +6,8 @@ class Main {
   public static void main(String[] args) {
     Scanner console = new Scanner(System.in);
     String nome, dataAdmissao, cargo;
-    int mesReferencia;
-    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte;
+    int mesReferencia, horasTrabalhadas, diasTrabalhadosSemanal, jornadaHoraSemanal, jornadaHoraMensal, semanas = 5;
+    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte, valeAlimentacao;
     
     //nome completo
     System.out.println("Insira seu nome: ");
@@ -28,11 +28,24 @@ class Main {
     //salário bruto
     System.out.println("Insira o Salario Bruto (00.00): ");
     salarioBruto = console.nextBigDecimal();
+
+    //horas trabalhadas por dia
+    System.out.println("Informe as horas trabalhadas por dia:");
+    horasTrabalhadas = console.nextInt();
+
+    //dias trabalhados semanais
+    System.out.println("Informe a quantidade de dias trabalhados semanais:");
+    diasTrabalhadosSemanal = console.nextInt();
+
+    jornadaHoraSemanal = horasTrabalhadas * diasTrabalhadosSemanal;
+    jornadaHoraMensal = jornadaHoraSemanal * semanas;
     
-    salarioHora = calcularSalarioHora(salarioBruto, console);
+    salarioHora = calcularSalarioHora(salarioBruto, console, jornadaHoraMensal);
     adicionalPericulosidade = calcularPericulosidade(salarioBruto);
     adiconalInsalubridade = calcularInsalubridade(console);
     valeTransporte = calcularValeTransporte(salarioBruto, console);
+    valeAlimentacao = calcularValeAlimentacao(console, jornadaHoraMensal, horasTrabalhadas);
+    
     //criar relatorio
     System.out.println("\n\n\n\n\n*****Folha de Pagamento******");
     System.out.println("*****Nome Completo: " + nome);
@@ -48,24 +61,13 @@ class Main {
     System.out.println("*****IRRF: ");
     System.out.println("*****FGTS: ");
     System.out.println("*****Vale Transporte: " + valeTransporte);
-    System.out.println("*****Vale Refeição: ");
+    System.out.println("*****Vale Alimentação: " + valeAlimentacao);
     System.out.println("*****Valor do Salario Bruto: " + salarioBruto);
     System.out.println("*****Valor do Salario Hora: " + salarioHora);
   }
 
-  private static BigDecimal calcularSalarioHora(BigDecimal salarioBruto, Scanner console) {
-    int horasTrabalhadas, diasTrabalhados, jornadaSemanal, jornadaMensal, semanas = 5;
-        
-    System.out.println("Informe as horas trabalhadas por dia:");
-    horasTrabalhadas = console.nextInt();
-
-    System.out.println("Informe a quantidade de dias trabalhados semanais:");
-    diasTrabalhados = console.nextInt();
-
-    jornadaSemanal = horasTrabalhadas * diasTrabalhados;
-    jornadaMensal = jornadaSemanal * semanas;
-    
-    return salarioBruto.divide(new BigDecimal(jornadaMensal)).setScale(2, RoundingMode.HALF_EVEN);
+  private static BigDecimal calcularSalarioHora(BigDecimal salarioBruto, Scanner console, int jornadaHoraMensal) {  
+    return salarioBruto.divide(new BigDecimal(jornadaHoraMensal)).setScale(2, RoundingMode.HALF_EVEN);
   }
 
   private static BigDecimal calcularPericulosidade(BigDecimal salarioBruto) {
@@ -107,6 +109,19 @@ class Main {
       return seiscento;
     }
   }
+
+  private static BigDecimal calcularValeAlimentacao(Scanner console, int jornadaHoraMensal, int horasTrabalhadas) {
+    BigDecimal valorVale; 
+    double diasTrabalhados;
+    
+    System.out.println("Informe o valor diario do Vale Alimentação");
+    valorVale = console.nextBigDecimal();
+
+    diasTrabalhados = jornadaHoraMensal / horasTrabalhadas;
+       
+    return valorVale.multiply(new BigDecimal(diasTrabalhados)).setScale(2, RoundingMode.HALF_EVEN);
+  }
+  
 
   
 }
