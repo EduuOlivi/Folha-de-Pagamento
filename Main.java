@@ -7,7 +7,7 @@ class Main {
     Scanner console = new Scanner(System.in);
     String nome, dataAdmissao, cargo;
     int mesReferencia, horasTrabalhadas, diasTrabalhadosSemanal, jornadaHoraSemanal, jornadaHoraMensal, semanas = 5;
-    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte, valeAlimentacao;
+    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte, valeAlimentacao, valorINSS;
     
     //nome completo
     System.out.println("Insira seu nome: ");
@@ -45,6 +45,7 @@ class Main {
     adiconalInsalubridade = calcularInsalubridade(console);
     valeTransporte = calcularValeTransporte(salarioBruto, console);
     valeAlimentacao = calcularValeAlimentacao(console, jornadaHoraMensal, horasTrabalhadas);
+    valorINSS = calcularValorINSS(salarioBruto);
     
     //criar relatorio
     System.out.println("\n\n\n\n\n*****Folha de Pagamento******");
@@ -57,7 +58,7 @@ class Main {
     System.out.println("*****Periculosidade: " + adicionalPericulosidade);
     System.out.println("*****Insalubridade: " + adiconalInsalubridade);
     System.out.println("*****Descontos*****: ");
-    System.out.println("*****INSS: ");
+    System.out.println("*****INSS: " + valorINSS);
     System.out.println("*****IRRF: ");
     System.out.println("*****FGTS: ");
     System.out.println("*****Vale Transporte: " + valeTransporte);
@@ -120,6 +121,35 @@ class Main {
     diasTrabalhados = jornadaHoraMensal / horasTrabalhadas;
        
     return valorVale.multiply(new BigDecimal(diasTrabalhados)).setScale(2, RoundingMode.HALF_EVEN);
+  }
+
+  private static BigDecimal calcularValorINSS(BigDecimal salarioBruto) {
+    BigDecimal faixaINSS1 = new BigDecimal(1302.00), faixaINSS2 = new BigDecimal(2571.29), faixaINSS3 = new BigDecimal(3856.94), faixaINSS4 = new BigDecimal(7507.49), res1, res2, res3, res4;
+    double ali1 = 0.075, ali2 = 0.09, ali3 = 0.12, ali4 = 0.14;
+
+    if (salarioBruto.compareTo(faixaINSS1) == -1 || salarioBruto.compareTo(faixaINSS1) == 0) {
+      res1 = faixaINSS1.multiply(new BigDecimal(ali1));
+      res2 = new BigDecimal(0.0);
+      res3 = new BigDecimal(0.0);
+      res4 = new BigDecimal(0.0);
+    } else if (salarioBruto.compareTo(faixaINSS2) == -1 || salarioBruto.compareTo(faixaINSS2) == 0) {
+      res1 = faixaINSS1.multiply(new BigDecimal(ali1));
+      res2 = faixaINSS2.subtract(faixaINSS1).multiply(new BigDecimal(ali2));
+      res3 = new BigDecimal(0.0);
+      res4 = new BigDecimal(0.0);
+    } else if (salarioBruto.compareTo(faixaINSS3) == -1 || salarioBruto.compareTo(faixaINSS3) == 0) {
+      res1 = faixaINSS1.multiply(new BigDecimal(ali1));
+      res2 = faixaINSS2.subtract(faixaINSS1).multiply(new BigDecimal(ali2));
+      res3 = faixaINSS3.subtract(faixaINSS2).multiply(new BigDecimal(ali3));
+      res4 = new BigDecimal(0.0);
+    } else {
+      res1 = faixaINSS1.multiply(new BigDecimal(ali1));
+      res2 = faixaINSS2.subtract(faixaINSS1).multiply(new BigDecimal(ali2));
+      res3 = faixaINSS3.subtract(faixaINSS2).multiply(new BigDecimal(ali3));
+      res4 = faixaINSS4.subtract(faixaINSS3).multiply(new BigDecimal(ali4));
+    }
+    
+    return res1.add(res2.add(res3.add(res4))).setScale(2, RoundingMode.HALF_EVEN);
   }
   
 
