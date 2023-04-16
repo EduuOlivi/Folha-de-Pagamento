@@ -7,7 +7,7 @@ class Main {
     Scanner console = new Scanner(System.in);
     String nome, dataAdmissao, cargo;
     int mesReferencia;
-    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade;
+    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade;
     
     //nome completo
     System.out.println("Insira seu nome: ");
@@ -31,7 +31,7 @@ class Main {
     
     salarioHora = calcularSalarioHora(salarioBruto, console);
     adicionalPericulosidade = calcularPericulosidade(salarioBruto);
-    
+    adiconalInsalubridade = calcularInsalubridade(console);
     //criar relatorio
     System.out.println("\n\n\n\n\n*****Folha de Pagamento******");
     System.out.println("*****Nome Completo: " + nome);
@@ -41,7 +41,7 @@ class Main {
     System.out.println("*****Salário do colaborador: ");
     System.out.println("*****Proventos*****");
     System.out.println("*****Periculosidade: " + adicionalPericulosidade);
-    System.out.println("*****Insalubridade: ");
+    System.out.println("*****Insalubridade: " + adiconalInsalubridade);
     System.out.println("*****Descontos*****: ");
     System.out.println("*****INSS: ");
     System.out.println("*****IRRF: ");
@@ -71,6 +71,25 @@ class Main {
     double adicionalPericulosidade = 0.3;
     
     return salarioBruto.multiply(new BigDecimal(adicionalPericulosidade)).setScale(2, RoundingMode.HALF_EVEN);
+  }
+
+  private static BigDecimal calcularInsalubridade(Scanner console) {
+    int risco = 0;
+    double taxaSalario = 0;
+    BigDecimal salarioMinimo = new BigDecimal(1380.60);
+
+    System.out.println("Informe o grau de Risco: \n 1 para: Baixo \n 2 para: Médio \n 3 para: Alto");
+    risco = console.nextInt();
+
+    if (risco == 1) {
+      taxaSalario = 0.1;
+    } else if (risco == 2) {
+      taxaSalario = 0.2;
+    } else {
+      taxaSalario = 0.4;
+    }
+    
+    return salarioMinimo.multiply(new BigDecimal(taxaSalario)).setScale(2, RoundingMode.HALF_EVEN);
   }
 
   
