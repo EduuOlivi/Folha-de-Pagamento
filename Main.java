@@ -7,7 +7,7 @@ class Main {
     Scanner console = new Scanner(System.in);
     String nome, dataAdmissao, cargo;
     int mesReferencia, horasTrabalhadas, diasTrabalhadosSemanal, jornadaHoraSemanal, jornadaHoraMensal, semanas = 5;
-    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte, valeAlimentacao, valorINSS, valorFGTS;
+    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte, valeAlimentacao, valorINSS, valorFGTS, valorIRRF;
     
     //nome completo
     System.out.println("Insira seu nome: ");
@@ -47,6 +47,8 @@ class Main {
     valeAlimentacao = calcularValeAlimentacao(console, jornadaHoraMensal, horasTrabalhadas);
     valorINSS = calcularValorINSS(salarioBruto);
     valorFGTS = calcularFGTS(salarioBruto);
+    valorIRRF = calcularIRRF(salarioBruto, valorINSS, console);
+    salarioLiquido = calcularSalarioLiquido(salarioBruto, valorINSS, valorIRRF);
     
     //criar relatorio
     System.out.println("\n\n\n\n\n*****Folha de Pagamento******");
@@ -54,13 +56,13 @@ class Main {
     System.out.println("*****Data de Admissão: " + dataAdmissao);
     System.out.println("*****Mês Referência: " + mesReferencia);
     System.out.println("*****Cargo do colaborador: " + cargo);
-    System.out.println("*****Salário do colaborador: ");
+    System.out.println("*****Salário do colaborador: " + salarioLiquido);
     System.out.println("*****Proventos*****");
     System.out.println("*****Periculosidade: " + adicionalPericulosidade);
     System.out.println("*****Insalubridade: " + adiconalInsalubridade);
     System.out.println("*****Descontos*****");
     System.out.println("*****INSS: " + valorINSS);
-    System.out.println("*****IRRF: ");
+    System.out.println("*****IRRF: " + valorIRRF);
     System.out.println("*****FGTS: " + valorFGTS);
     System.out.println("*****Vale Transporte: " + valeTransporte);
     System.out.println("*****Vale Alimentação: " + valeAlimentacao);
@@ -157,5 +159,39 @@ class Main {
     return salarioBruto.multiply(new BigDecimal(0.08)).setScale(2, RoundingMode.HALF_EVEN);
   }
 
+  private static BigDecimal calcularIRRF(BigDecimal salarioBruto, BigDecimal valorINSS, Scanner console) {
+    BigDecimal baseCalculo, deducaoDepedente = new BigDecimal(189.59), pensaoAlimenticia, outrasDeducoes, totalDeducoes, ded2 = new BigDecimal(142.80), ded3 = new BigDecimal(354.80), ded4 = new BigDecimal(636.13), ded5 = new BigDecimal(869.36), faixa1 = new BigDecimal(1903.98), faixa2 = new BigDecimal(2826.65), faixa3 = new BigDecimal(3751.05), faixa4 = new BigDecimal(4664.48), valorIRRF = BigDecimal.ZERO;
+    int dependentes;
+    double ali2 = 0.075, ali3 = 0.15, ali4 = 0.225, ali5 = 0.275;
+    
+    System.out.println("Informe a quantidade de dependetes: ");
+    dependentes = console.nextInt();
+
+    System.out.println("Informe a pensão alimentícia: ");
+    pensaoAlimenticia = console.nextBigDecimal();
+
+    System.out.println("Informe outras deduções: ");
+    outrasDeducoes = console.nextBigDecimal();
+
+    totalDeducoes = valorINSS.add(deducaoDepedente.multiply(new BigDecimal(dependentes))).add(pensaoAlimenticia).add(outrasDeducoes);
+    
+    baseCalculo = salarioBruto.subtract(totalDeducoes);
+
+    if (baseCalculo.compareTo(faixa1) == 1 && (baseCalculo.compareTo(faixa2) == -1 || baseCalculo.compareTo(faixa2) == 0)) {
+      valorIRRF = baseCalculo.multiply(new BigDecimal(ali2)).subtract(ded2);
+    } else if (baseCalculo.compareTo(faixa2) == 1 && (baseCalculo.compareTo(faixa3) == -1 || baseCalculo.compareTo(faixa3) == 0)) {
+      valorIRRF = baseCalculo.multiply(new BigDecimal(ali3)).subtract(ded3);
+    } else if (baseCalculo.compareTo(faixa3) == 1 && (baseCalculo.compareTo(faixa4) == -1 || baseCalculo.compareTo(faixa4) == 0)) {
+      valorIRRF = baseCalculo.multiply(new BigDecimal(ali4)).subtract(ded4);
+    } else if (baseCalculo.compareTo(faixa4) == 1) {
+      valorIRRF = baseCalculo.multiply(new BigDecimal(ali5)).subtract(ded5);
+    }
+    
+    return valorIRRF.setScale(2, RoundingMode.HALF_EVEN);
+  }
+
+  private static BigDecimal calcularSalarioLiquido(BigDecimal salarioBruto, BigDecimal valorINSS, BigDecimal valorIRRF) {
+    return salarioBruto.subtract(valorINSS).subtract(valorIRRF).setScale(2, RoundingMode.HALF_EVEN);
+  }
   
 }
