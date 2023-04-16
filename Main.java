@@ -7,7 +7,7 @@ class Main {
     Scanner console = new Scanner(System.in);
     String nome, dataAdmissao, cargo;
     int mesReferencia;
-    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade;
+    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte;
     
     //nome completo
     System.out.println("Insira seu nome: ");
@@ -32,6 +32,7 @@ class Main {
     salarioHora = calcularSalarioHora(salarioBruto, console);
     adicionalPericulosidade = calcularPericulosidade(salarioBruto);
     adiconalInsalubridade = calcularInsalubridade(console);
+    valeTransporte = calcularValeTransporte(salarioBruto, console);
     //criar relatorio
     System.out.println("\n\n\n\n\n*****Folha de Pagamento******");
     System.out.println("*****Nome Completo: " + nome);
@@ -46,7 +47,7 @@ class Main {
     System.out.println("*****INSS: ");
     System.out.println("*****IRRF: ");
     System.out.println("*****FGTS: ");
-    System.out.println("*****Vale Transporte: ");
+    System.out.println("*****Vale Transporte: " + valeTransporte);
     System.out.println("*****Vale Refeição: ");
     System.out.println("*****Valor do Salario Bruto: " + salarioBruto);
     System.out.println("*****Valor do Salario Hora: " + salarioHora);
@@ -90,6 +91,21 @@ class Main {
     }
     
     return salarioMinimo.multiply(new BigDecimal(taxaSalario)).setScale(2, RoundingMode.HALF_EVEN);
+  }
+
+  private static BigDecimal calcularValeTransporte(BigDecimal salarioBruto, Scanner console) {
+    BigDecimal valeTransporte, seiscento, taxaTransporte = new BigDecimal(0.06);
+    
+    System.out.println("Informe o valor do Vale Transporte:");
+    valeTransporte = console.nextBigDecimal();
+
+    seiscento = salarioBruto.multiply(taxaTransporte).setScale(2, RoundingMode.HALF_EVEN);
+
+    if (seiscento.compareTo(valeTransporte) == 1) {
+      return valeTransporte; 
+    } else {
+      return seiscento;
+    }
   }
 
   
