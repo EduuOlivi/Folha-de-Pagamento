@@ -7,7 +7,7 @@ class Main {
     Scanner console = new Scanner(System.in);
     String nome, dataAdmissao, cargo;
     int mesReferencia, horasTrabalhadas, diasTrabalhadosSemanal, jornadaHoraSemanal, jornadaHoraMensal, semanas = 5;
-    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte, valeAlimentacao, valorINSS;
+    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte, valeAlimentacao, valorINSS, valorFGTS;
     
     //nome completo
     System.out.println("Insira seu nome: ");
@@ -46,6 +46,7 @@ class Main {
     valeTransporte = calcularValeTransporte(salarioBruto, console);
     valeAlimentacao = calcularValeAlimentacao(console, jornadaHoraMensal, horasTrabalhadas);
     valorINSS = calcularValorINSS(salarioBruto);
+    valorFGTS = calcularFGTS(salarioBruto);
     
     //criar relatorio
     System.out.println("\n\n\n\n\n*****Folha de Pagamento******");
@@ -57,10 +58,10 @@ class Main {
     System.out.println("*****Proventos*****");
     System.out.println("*****Periculosidade: " + adicionalPericulosidade);
     System.out.println("*****Insalubridade: " + adiconalInsalubridade);
-    System.out.println("*****Descontos*****: ");
+    System.out.println("*****Descontos*****");
     System.out.println("*****INSS: " + valorINSS);
     System.out.println("*****IRRF: ");
-    System.out.println("*****FGTS: ");
+    System.out.println("*****FGTS: " + valorFGTS);
     System.out.println("*****Vale Transporte: " + valeTransporte);
     System.out.println("*****Vale Alimentação: " + valeAlimentacao);
     System.out.println("*****Valor do Salario Bruto: " + salarioBruto);
@@ -151,7 +152,10 @@ class Main {
     
     return res1.add(res2.add(res3.add(res4))).setScale(2, RoundingMode.HALF_EVEN);
   }
-  
+    
+  private static BigDecimal calcularFGTS(BigDecimal salarioBruto) {
+    return salarioBruto.multiply(new BigDecimal(0.08)).setScale(2, RoundingMode.HALF_EVEN);
+  }
 
   
 }
