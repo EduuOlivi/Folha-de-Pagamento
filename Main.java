@@ -7,7 +7,7 @@ class Main {
     Scanner console = new Scanner(System.in);
     String nome, dataAdmissao, cargo;
     int mesReferencia, horasTrabalhadas, diasTrabalhadosSemanal, jornadaHoraSemanal, jornadaHoraMensal, semanas = 5;
-    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte, valeAlimentacao, valorINSS, valorFGTS, valorIRRF;
+    BigDecimal salarioBruto, salarioHora, adicionalPericulosidade, adiconalInsalubridade, valeTransporte, valeAlimentacao, valorINSS, valorFGTS, valorIRRF, salarioLiquido, valorPlanoSaude;
     
     //nome completo
     System.out.println("Insira seu nome: ");
@@ -39,6 +39,10 @@ class Main {
 
     jornadaHoraSemanal = horasTrabalhadas * diasTrabalhadosSemanal;
     jornadaHoraMensal = jornadaHoraSemanal * semanas;
+
+    //plano de saúde
+    System.out.println("Informe o valor do plano de saúde:");
+    valorPlanoSaude = console.nextBigDecimal();
     
     salarioHora = calcularSalarioHora(salarioBruto, console, jornadaHoraMensal);
     adicionalPericulosidade = calcularPericulosidade(salarioBruto);
@@ -48,7 +52,7 @@ class Main {
     valorINSS = calcularValorINSS(salarioBruto);
     valorFGTS = calcularFGTS(salarioBruto);
     valorIRRF = calcularIRRF(salarioBruto, valorINSS, console);
-    salarioLiquido = calcularSalarioLiquido(salarioBruto, valorINSS, valorIRRF);
+    salarioLiquido = calcularSalarioLiquido(salarioBruto, valorINSS, valorIRRF, valeTransporte, valorPlanoSaude);
     
     //criar relatorio
     System.out.println("\n\n\n\n\n*****Folha de Pagamento******");
@@ -57,10 +61,10 @@ class Main {
     System.out.println("*****Mês Referência: " + mesReferencia);
     System.out.println("*****Cargo do colaborador: " + cargo);
     System.out.println("*****Salário do colaborador: " + salarioLiquido);
-    System.out.println("*****Proventos*****");
+    System.out.println("\n*****Proventos*****");
     System.out.println("*****Periculosidade: " + adicionalPericulosidade);
     System.out.println("*****Insalubridade: " + adiconalInsalubridade);
-    System.out.println("*****Descontos*****");
+    System.out.println("\n*****Descontos*****");
     System.out.println("*****INSS: " + valorINSS);
     System.out.println("*****IRRF: " + valorIRRF);
     System.out.println("*****FGTS: " + valorFGTS);
@@ -190,8 +194,8 @@ class Main {
     return valorIRRF.setScale(2, RoundingMode.HALF_EVEN);
   }
 
-  private static BigDecimal calcularSalarioLiquido(BigDecimal salarioBruto, BigDecimal valorINSS, BigDecimal valorIRRF) {
-    return salarioBruto.subtract(valorINSS).subtract(valorIRRF).setScale(2, RoundingMode.HALF_EVEN);
+  private static BigDecimal calcularSalarioLiquido(BigDecimal salarioBruto, BigDecimal valorINSS, BigDecimal valorIRRF, BigDecimal valeTransporte, BigDecimal valorPlanoSaude) {
+    return salarioBruto.subtract(valorINSS).subtract(valorIRRF).subtract(valeTransporte).subtract(valorPlanoSaude).setScale(2, RoundingMode.HALF_EVEN);
   }
   
 }
